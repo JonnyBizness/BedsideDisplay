@@ -1,12 +1,16 @@
 /**
  * Bedside Display calendar proxy.
  *
- * Paste into script.google.com, set the script timezone to Pacific/Auckland
- * in Project Settings, then Deploy > New deployment > Web app with
- * "Execute as: Me" and "Who has access: Anyone". See README.md.
+ * REQUIRES the Advanced Calendar Service. In the editor: Services (+) >
+ * Calendar API > Add. Without it `Calendar` is undefined and every request
+ * fails with a ReferenceError.
  *
- * Returns the same JSON shape as the Google Calendar API, so the display
- * needs no API key and the calendar stays private.
+ * This deliberately does NOT use CalendarApp. CalendarApp.getEvents() was
+ * measured at 32-46s per request, well past any sane client timeout.
+ * Calendar.Events.list is a thin wrapper over the REST API and returns in
+ * a couple of seconds.
+ *
+ * Deploy: Web app, "Execute as: Me", "Who has access: Anyone". See README.md.
  */
 
 // 'primary' is your default calendar. Add more IDs to merge them.
@@ -17,34 +21,26 @@ const DAYS_AHEAD = 1;
 
 function doGet(e) {
   const params = (e && e.parameter) || {};
-  const from = params.from ? new Date(params.from) : dayOffset(-DAYS_BEHIND);
-  const to = params.to ? new Date(params.to) : dayOffset(DAYS_AHEAD + 1);
+  const timeMin = (params.from ? new Date(params.from) : dayOffset(-DAYS_BEHIND));
+  const timeMax = (params.to ? new Date(params.to) : dayOffset(DAYS_AHEAD + 1));
 
   const items = [];
 
   for (const id of CALENDAR_IDS) {
-    const calendar = id === 'primary'
-      ? CalendarApp.getDefaultCalendar()
-      : CalendarApp.getCalendarById(id);
+    const response = Calendar.Events.list(id, {
+      timeMin: timeMin.toISOString(),
+      timeMax: timeMax.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+      maxResults: 250,
+      fields: 'items(summary,start,end)',
+    });
 
-    if (!calendar) continue;
-
-    for (const event of calendar.getEvents(from, to)) {
-      items.push(event.isAllDayEvent()
-        ? {
-          summary: event.getTitle(),
-          // getAllDayEndDate is exclusive, matching the Calendar API.
-          start: { date: ymd(event.getAllDayStartDate()) },
-          end: { date: ymd(event.getAllDayEndDate()) },
-        }
-        : {
-          summary: event.getTitle(),
-          start: { dateTime: event.getStartTime().toISOString() },
-          end: { dateTime: event.getEndTime().toISOString() },
-        });
-    }
+    if (response.items) items.push(...response.items);
   }
 
+  // Already the Calendar API shape, so the client needs no translation:
+  // all-day events carry start.date, timed events start.dateTime.
   return ContentService
     .createTextOutput(JSON.stringify({ items: items }))
     .setMimeType(ContentService.MimeType.JSON);
@@ -53,8 +49,4 @@ function doGet(e) {
 function dayOffset(days) {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate() + days);
-}
-
-function ymd(date) {
-  return Utilities.formatDate(date, Session.getScriptTimeZone(), 'yyyy-MM-dd');
 }

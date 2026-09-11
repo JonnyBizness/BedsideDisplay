@@ -91,6 +91,17 @@ The `/exec` URL is a secret: anyone holding it can read the calendar. It also
 ships inside the JavaScript the iPad downloads, so it is readable by anyone
 who can load the page. That is inherent to a serverless build, not a mistake.
 
+#### Required: the Advanced Calendar Service
+
+In the script editor, **Services (+) → Calendar API → Add**. `Code.gs` calls
+`Calendar.Events.list`, and without the service enabled `Calendar` is
+undefined and every request throws.
+
+It does not use `CalendarApp`, which looks simpler and needs no service, but
+was measured at **32–46 seconds per request** — past any sane client timeout.
+`Calendar.Events.list` returns in a couple of seconds. Do not "simplify" it
+back.
+
 #### Changing the script
 
 Edit `apps-script/Code.gs` here, paste it into the project, then redeploy via
@@ -116,6 +127,19 @@ it behaves exactly like the iPad. What you see tells you which thing broke:
 | Google sign-in page | Access is not **Anyone** (`Anyone with Google account` also fails) |
 | "Unable to open the file" / 404 | No Web app deployment at that URL — it was replaced or deleted |
 | "Access denied" / 403 | Deployment exists but is restricted |
+| JSON, but takes 30s+ | Script is using `CalendarApp`; switch to the Advanced Calendar Service |
+| Error mentioning `Calendar is not defined` | Advanced Calendar Service not added |
+
+Status reads *Calendar: Request timed out* when a response takes longer than
+`HTTP_TIMEOUT_MS` in `js/config.js`. Time the endpoint before raising it —
+a slow script is the cause far more often than a tight timeout:
+
+```bash
+curl -s -o /dev/null -L -w "%{time_total}s ttfb=%{time_starttransfer}s\n" "<EXEC_URL>"
+```
+
+A fast `time_connect` with a slow `ttfb` means the script is slow, not the
+network.
 
 `curl -I` against `/exec` always returns 403 — Apps Script does not answer HEAD
 requests. Use a normal GET when testing from a terminal.

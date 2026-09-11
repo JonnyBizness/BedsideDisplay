@@ -31,5 +31,7 @@ export const CONFIG = {
     reloadMs: 6 * 60 * 60 * 1000,
   },
 
-  HTTP_TIMEOUT_MS: 15000,
+  // Apps Script is slower than a plain API; 15s was too tight and the
+  // calendar timed out on most polls.
+  HTTP_TIMEOUT_MS: 30000,
 };
