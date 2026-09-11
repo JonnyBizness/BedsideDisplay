@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<title>Bedside Display</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bedside">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <header class="top">
+    <div class="date-line" id="date-line">&nbsp;</div>
+  </header>
+
+  <section class="hero">
+    <span class="clock" id="clock">--:--</span>
+    <span class="clock-meridiem" id="clock-meridiem"></span>
+  </section>
+
+  <section class="band band-rain">
+    <div class="band-head">
+      <span class="band-title">Rain today</span>
+      <span class="band-note" id="rain-summary">&hellip;</span>
+    </div>
+    <div class="rain-chart" id="rain-chart"></div>
+  </section>
+
+  <section class="band band-days">
+    <div class="band-head">
+      <span class="band-title">Calendar</span>
+      <span class="band-note" id="calendar-note">&hellip;</span>
+    </div>
+    <div class="days" id="days"></div>
+  </section>
+
+  <footer class="status" id="status">&nbsp;</footer>
+
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

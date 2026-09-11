@@ -1,0 +1,165 @@
+# Bedside Display
+
+A static single-page clock, three-day calendar, and rain chart for an iPad
+running full-screen in portrait. No server, no build step — push to a repo and
+enable GitHub Pages.
+
+## Current state
+
+| Piece | Status |
+| --- | --- |
+| Clock, rain chart, three-day columns | Built and working |
+| Weather (Open-Meteo, Te Aro) | Live, no key needed |
+| Calendar proxy (Apps Script) | Deployed, authorised, returning JSON |
+| `CALENDAR_PROXY_URL` in `js/config.js` | Set and verified cross-origin |
+| GitHub Pages | Not yet enabled |
+| `SHOW_BOUNDS` | Still `true` — dotted preview outline is showing |
+
+Apps Script project:
+[13zjpiOP…cBCDh8nwi](https://script.google.com/home/projects/13zjpiOP0cyZ7fcvXNbhkb2y7QGB_f_7XhYiIL_TN87xOqLzcBCDh8nwi/settings)
+
+Remaining to go live: set `SHOW_BOUNDS: false`, push, enable Pages, then
+**On the iPad** below.
+
+## Layout
+
+```
+index.html
+css/styles.css
+js/config.js     settings — proxy URL, location, formats, refresh intervals
+js/util.js       date parsing, formatting, DOM/SVG helpers
+js/http.js       fetch wrapper with timeout
+js/clock.js      clock + date line
+js/weather.js    Open-Meteo fetch + SVG rain chart
+js/calendar.js   Google Calendar fetch + three-day columns
+js/main.js       entry point, wiring and refresh scheduling
+
+apps-script/Code.gs   calendar proxy, deployed to script.google.com
+```
+
+ES modules, loaded via `<script type="module">`. No bundler.
+
+## Browser target
+
+iPad Air (1st gen), which reaches **iOS 12 / Safari 12**. Chrome on iOS uses
+the same WebKit, so Safari 12 is the ceiling either way.
+
+Available: ES modules, `fetch`, `async`/`await`, arrow functions, template
+literals, destructuring, `flatMap`, `Intl`, CSS Grid, CSS custom properties,
+`AbortController`.
+
+**Not** available — avoid these:
+
+- `Promise.allSettled` (Safari 13)
+- optional chaining `?.` and nullish coalescing `??` (Safari 13.1)
+- `gap` on **flexbox** (Safari 14.1) — it works on Grid, which is why the
+  calendar columns use Grid
+
+Design canvas is **768 × 1024 CSS pixels** (portrait); 1536 × 2048 physical on
+the Air's retina screen.
+
+`SHOW_BOUNDS` in `js/config.js` draws a dotted outline at exactly that size so
+a desktop browser preview shows precisely what the iPad will show. Turn it off
+once the display is on the device.
+
+## Configuration
+
+### 1. Weather
+
+**Already working.** Open-Meteo needs no key and sends CORS headers, so it
+works from GitHub Pages as-is. `LOCATION` is set to Te Aro.
+
+Do not expect finer placement to change anything: every central Wellington
+coordinate tested — CBD, Te Aro, Courtenay Place — resolves to the same
+forecast grid cell (-41.3005, 174.7059) and returns identical data. The model
+grid is coarser than the city. To move it somewhere genuinely different, edit
+`LOCATION` and `TIMEZONE` in `js/config.js`.
+
+### 2. Google Calendar
+
+**Already done.** The proxy is deployed and `CALENDAR_PROXY_URL` is set. What
+follows is for changing it later.
+
+**Why a proxy exists at all** — worth knowing before anyone tries to
+"simplify" it away. A Google API key can only read *public* calendars, and
+browser OAuth tokens expire after an hour with no silent refresh on Safari.
+Neither survives on a display that runs for weeks. `apps-script/Code.gs` runs
+as you, reads the calendar directly, and returns the same JSON shape the
+Calendar API would — no API key, no Cloud Console project, nothing to host.
+
+The `/exec` URL is a secret: anyone holding it can read the calendar. It also
+ships inside the JavaScript the iPad downloads, so it is readable by anyone
+who can load the page. That is inherent to a serverless build, not a mistake.
+
+#### Changing the script
+
+Edit `apps-script/Code.gs` here, paste it into the project, then redeploy via
+**Deploy → Manage deployments → ✏️ edit → Version: New version → Deploy**.
+
+**Do not use "New deployment".** It mints a fresh `/exec` URL while
+`js/config.js` keeps pointing at the old one, and the only symptom is the
+calendar quietly reading *unavailable*.
+
+#### Adding more calendars
+
+Add their IDs to `CALENDAR_IDS` at the top of `Code.gs`, then redeploy as
+above. The script merges them server-side, so `js/config.js` needs no change.
+
+#### When the calendar reads "unavailable"
+
+Open the `/exec` URL in a **private/incognito window** — no Google session, so
+it behaves exactly like the iPad. What you see tells you which thing broke:
+
+| What you see | Cause |
+| --- | --- |
+| JSON starting `{"items":[` | Working; problem is elsewhere |
+| Google sign-in page | Access is not **Anyone** (`Anyone with Google account` also fails) |
+| "Unable to open the file" / 404 | No Web app deployment at that URL — it was replaced or deleted |
+| "Access denied" / 403 | Deployment exists but is restricted |
+
+`curl -I` against `/exec` always returns 403 — Apps Script does not answer HEAD
+requests. Use a normal GET when testing from a terminal.
+
+#### Rebuilding from scratch
+
+Only if the project is lost.
+
+1. [script.google.com](https://script.google.com) → **New project**.
+2. Paste `apps-script/Code.gs` over the stub.
+3. **Project Settings** → time zone **Pacific/Auckland**. The default is US
+   Pacific, and all-day events land on the wrong day if it is left there.
+4. **Deploy → New deployment**. Click the **⚙ gear** beside "Select type" and
+   choose **Web app** — left alone it deploys a *Library*, which returns a
+   `/macros/library/…` URL that can never serve JSON.
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+5. Authorise it. The "unverified app" warning is expected for your own script:
+   *Advanced* → *Go to (project name)*.
+6. Verify in incognito, then put the `/exec` URL in `js/config.js`.
+
+With `CALENDAR_PROXY_URL` blank, the columns render empty and show
+*not configured*.
+
+## Local preview
+
+ES modules will not load over `file://`. Serve it:
+
+```bash
+python -m http.server 8123
+```
+
+## Deploying
+
+**Not yet done.** Push to `main`, then Settings → Pages → deploy from `main` /
+root. Free GitHub Pages only serves **public** repos; private needs a paid plan.
+
+## On the iPad
+
+**Not yet done.**
+
+Open the Pages URL in Safari, Share → **Add to Home Screen**, then launch from
+the icon. The `apple-mobile-web-app-capable` meta tag makes it run without
+browser chrome. Set Settings → Display & Brightness → Auto-Lock → Never.
+
+The page reloads itself every 6 hours (`REFRESH.reloadMs`) to shed memory on a
+device that never restarts.
