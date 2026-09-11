@@ -46,9 +46,14 @@ function summarise(hours) {
   return `${round1(total)} mm · peak ${peak.probability}% at ${formatTime(peak.date)}`;
 }
 
+// Colours live in CSS so the chart follows the theme; only the
+// rain-intensity ramp is data-driven.
 function barStyle({ mm }) {
-  if (mm <= 0) return { fill: '#26313d', opacity: 1 };
-  return { fill: '#4da3ff', opacity: 0.45 + Math.min(mm / 3, 1) * 0.55 };
+  if (mm <= 0) return { className: 'rain-bar', opacity: 1 };
+  return {
+    className: 'rain-bar is-wet',
+    opacity: 0.45 + Math.min(mm / 3, 1) * 0.55,
+  };
 }
 
 function render(hours) {
@@ -61,12 +66,12 @@ function render(hours) {
 
   root.append(
     svg('line', {
+      class: 'rain-baseline',
       x1: 0, y1: BASELINE, x2: VIEW_W, y2: BASELINE,
-      stroke: '#1c1c1c', 'stroke-width': 1,
     }),
     svg('line', {
+      class: 'rain-grid',
       x1: 0, y1: TOP + CHART_H / 2, x2: VIEW_W, y2: TOP + CHART_H / 2,
-      stroke: '#121212', 'stroke-width': 1,
     }),
   );
 
@@ -75,24 +80,23 @@ function render(hours) {
 
   hours.forEach((hour, i) => {
     const height = Math.max((hour.probability / 100) * CHART_H, 2);
-    const { fill, opacity } = barStyle(hour);
+    const { className, opacity } = barStyle(hour);
 
     root.append(svg('rect', {
+      class: className,
       x: round1(i * slot + (slot - barW) / 2),
       y: round1(BASELINE - height),
       width: round1(barW),
       height: round1(height),
       rx: 2,
-      fill,
       'fill-opacity': opacity,
     }));
 
     if (i % 3 === 0) {
       const label = svg('text', {
+        class: 'rain-hour',
         x: round1(i * slot + slot / 2),
         y: LABEL_Y,
-        fill: '#3d3d3d',
-        'font-size': 16,
         'text-anchor': 'middle',
       });
       label.textContent = pad2(i);
@@ -103,9 +107,9 @@ function render(hours) {
   const now = new Date();
   const nowX = ((now.getHours() * 60 + now.getMinutes()) / 1440) * VIEW_W;
   root.append(svg('line', {
+    class: 'rain-now',
     x1: round1(nowX), y1: TOP - 4,
     x2: round1(nowX), y2: BASELINE + 5,
-    stroke: '#ffffff', 'stroke-opacity': 0.35, 'stroke-width': 2,
   }));
 
   chartEl.append(root);

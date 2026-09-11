@@ -1,6 +1,7 @@
 import { CONFIG } from './config.js';
 import * as Calendar from './calendar.js';
 import * as Clock from './clock.js';
+import * as Theme from './theme.js';
 import * as Weather from './weather.js';
 import { formatTime } from './util.js';
 
@@ -24,6 +25,8 @@ function start() {
   statusEl = byId('status');
 
   if (CONFIG.SHOW_BOUNDS) byId('app').classList.add('app-bounds');
+
+  Theme.init({ root: document.documentElement });
 
   Weather.init({ chartEl: byId('rain-chart'), summaryEl: byId('rain-summary') });
   Calendar.init({ daysEl: byId('days'), noteEl: byId('calendar-note') });

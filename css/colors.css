@@ -1,0 +1,296 @@
+/* Tangram palette, converted from SCSS to CSS custom properties.
+   Values unchanged. Semantic theme tokens live in styles.css. */
+
+:root {
+  --tg-white: #fff;
+  --tg-black: #000;
+
+  /* pohutukawa */
+  --tg-pohutukawa-5: #fff8f8;
+  --tg-pohutukawa-10: #fff1f2;
+  --tg-pohutukawa-20: #ffe7e7;
+  --tg-pohutukawa-30: #ffd5d5;
+  --tg-pohutukawa-50: #ffbcbd;
+  --tg-pohutukawa-100: #fa999b;
+  --tg-pohutukawa-200: #f57f7e;
+  --tg-pohutukawa-300: #ef6d6b;
+  --tg-pohutukawa-400: #e95958;
+  --tg-pohutukawa-500: #e34647;
+  --tg-pohutukawa-600: #d93a3f;
+  --tg-pohutukawa-700: #c82630;
+  --tg-pohutukawa-800: #b21c2a;
+  --tg-pohutukawa-900: #9f2023;
+
+  /* jaffa */
+  --tg-jaffa-5: #fff8f5;
+  --tg-jaffa-10: #fff2ed;
+  --tg-jaffa-20: #ffe9e1;
+  --tg-jaffa-30: #ffd9ca;
+  --tg-jaffa-50: #ffc6b0;
+  --tg-jaffa-100: #ffaf8f;
+  --tg-jaffa-200: #ff976e;
+  --tg-jaffa-300: #ff8455;
+  --tg-jaffa-400: #fc723e;
+  --tg-jaffa-500: #f3632d;
+  --tg-jaffa-600: #e95219;
+  --tg-jaffa-700: #d54209;
+  --tg-jaffa-800: #c23802;
+  --tg-jaffa-900: #a72f00;
+
+  /* hokey-pokey */
+  --tg-hokey-pokey-5: #fffcf0;
+  --tg-hokey-pokey-10: #fffae5;
+  --tg-hokey-pokey-20: #fff4d1;
+  --tg-hokey-pokey-30: #ffe8ac;
+  --tg-hokey-pokey-50: #ffe18d;
+  --tg-hokey-pokey-100: #ffd972;
+  --tg-hokey-pokey-200: #ffd35f;
+  --tg-hokey-pokey-300: #ffcb4f;
+  --tg-hokey-pokey-400: #ffc041;
+  --tg-hokey-pokey-500: #f9af2c;
+  --tg-hokey-pokey-600: #eb9600;
+  --tg-hokey-pokey-700: #d57800;
+  --tg-hokey-pokey-800: #b45600;
+  --tg-hokey-pokey-900: #943900;
+
+  /* kiwifruit */
+  --tg-kiwifruit-5: #fdfff1;
+  --tg-kiwifruit-10: #fafee0;
+  --tg-kiwifruit-20: #f3f9d4;
+  --tg-kiwifruit-30: #eaf2bb;
+  --tg-kiwifruit-50: #dfe8a4;
+  --tg-kiwifruit-100: #d4df87;
+  --tg-kiwifruit-200: #ccda70;
+  --tg-kiwifruit-300: #c1d155;
+  --tg-kiwifruit-400: #b8cb3d;
+  --tg-kiwifruit-500: #acc313;
+  --tg-kiwifruit-600: #9ab91a;
+  --tg-kiwifruit-700: #88aa28;
+  --tg-kiwifruit-800: #719c2f;
+  --tg-kiwifruit-900: #659130;
+
+  /* feijoa */
+  --tg-feijoa-5: #f3fff6;
+  --tg-feijoa-10: #ecfdf2;
+  --tg-feijoa-20: #e1fbea;
+  --tg-feijoa-30: #c6f3d5;
+  --tg-feijoa-50: #a8eabe;
+  --tg-feijoa-100: #87dfa5;
+  --tg-feijoa-200: #6fd591;
+  --tg-feijoa-300: #57c57b;
+  --tg-feijoa-400: #3cb766;
+  --tg-feijoa-500: #29a754;
+  --tg-feijoa-600: #229b4b;
+  --tg-feijoa-700: #1b8840;
+  --tg-feijoa-800: #137b37;
+  --tg-feijoa-900: #0f6d2f;
+
+  /* waitomo */
+  --tg-waitomo-5: #f1fff7;
+  --tg-waitomo-10: #e8fef2;
+  --tg-waitomo-20: #d9fae8;
+  --tg-waitomo-30: #c4f6de;
+  --tg-waitomo-50: #a8eed1;
+  --tg-waitomo-100: #85e3bc;
+  --tg-waitomo-200: #67d9aa;
+  --tg-waitomo-300: #4ecf9a;
+  --tg-waitomo-400: #34c58d;
+  --tg-waitomo-500: #00bc82;
+  --tg-waitomo-600: #00aa76;
+  --tg-waitomo-700: #00986a;
+  --tg-waitomo-800: #00825a;
+  --tg-waitomo-900: #00714b;
+
+  /* paua */
+  --tg-paua-5: #f2fdff;
+  --tg-paua-10: #e7fdff;
+  --tg-paua-20: #d8fafd;
+  --tg-paua-30: #c6f1f5;
+  --tg-paua-50: #b2e8ef;
+  --tg-paua-100: #94dfe8;
+  --tg-paua-200: #77d6e1;
+  --tg-paua-300: #52ccdb;
+  --tg-paua-400: #24c0d3;
+  --tg-paua-500: #00b3c8;
+  --tg-paua-600: #02a5bc;
+  --tg-paua-700: #0096ae;
+  --tg-paua-800: #00869f;
+  --tg-paua-900: #007893;
+
+  /* tasman */
+  --tg-tasman-5: #f3faff;
+  --tg-tasman-10: #e1f3ff;
+  --tg-tasman-20: #cbeaff;
+  --tg-tasman-30: #aedeff;
+  --tg-tasman-50: #8dcefc;
+  --tg-tasman-100: #6bbcf4;
+  --tg-tasman-200: #52b0f0;
+  --tg-tasman-300: #3da5eb;
+  --tg-tasman-400: #279be9;
+  --tg-tasman-500: #148fe2;
+  --tg-tasman-600: #007acd;
+  --tg-tasman-700: #006ebd;
+  --tg-tasman-800: #0061af;
+  --tg-tasman-900: #00569e;
+
+  /* tip-top */
+  --tg-tip-top-5: #f7faff;
+  --tg-tip-top-10: #f0f6ff;
+  --tg-tip-top-20: #e3ecff;
+  --tg-tip-top-30: #d0dfff;
+  --tg-tip-top-50: #bdd3ff;
+  --tg-tip-top-100: #a1c0fe;
+  --tg-tip-top-200: #84acfa;
+  --tg-tip-top-300: #659af0;
+  --tg-tip-top-400: #4d80e5;
+  --tg-tip-top-500: #3b71dc;
+  --tg-tip-top-600: #2f62c9;
+  --tg-tip-top-700: #2656b7;
+  --tg-tip-top-800: #1d479b;
+  --tg-tip-top-900: #183c84;
+
+  /* hebe */
+  --tg-hebe-5: #fcf7ff;
+  --tg-hebe-10: #fcefff;
+  --tg-hebe-20: #f2ddf8;
+  --tg-hebe-30: #e5c6eb;
+  --tg-hebe-50: #d1a9da;
+  --tg-hebe-100: #bc8cc5;
+  --tg-hebe-200: #ac78b8;
+  --tg-hebe-300: #9660a0;
+  --tg-hebe-400: #874f92;
+  --tg-hebe-500: #7b4288;
+  --tg-hebe-600: #683473;
+  --tg-hebe-700: #5c2b66;
+  --tg-hebe-800: #50215a;
+  --tg-hebe-900: #451b4f;
+
+  /* pinot */
+  --tg-pinot-5: #fff5fe;
+  --tg-pinot-10: #ffedfc;
+  --tg-pinot-20: #f9e0f7;
+  --tg-pinot-30: #edc1e5;
+  --tg-pinot-50: #dc9ece;
+  --tg-pinot-100: #cb82bb;
+  --tg-pinot-200: #b468a0;
+  --tg-pinot-300: #a35489;
+  --tg-pinot-400: #944275;
+  --tg-pinot-500: #8a3467;
+  --tg-pinot-600: #812b5f;
+  --tg-pinot-700: #722152;
+  --tg-pinot-800: #661647;
+  --tg-pinot-900: #5a143f;
+
+  /* mordor */
+  --tg-mordor-5: #fefafb;
+  --tg-mordor-10: #fbf5f6;
+  --tg-mordor-20: #f0e8e8;
+  --tg-mordor-30: #dfd3d4;
+  --tg-mordor-50: #c9b9b9;
+  --tg-mordor-100: #ad9696;
+  --tg-mordor-200: #94797a;
+  --tg-mordor-300: #806263;
+  --tg-mordor-400: #6f5253;
+  --tg-mordor-500: #5d4244;
+  --tg-mordor-600: #4d3739;
+  --tg-mordor-700: #422e2f;
+  --tg-mordor-800: #352524;
+  --tg-mordor-900: #291e1e;
+
+  /* bluff-oyster */
+  --tg-bluff-oyster-5: #faf9f8;
+  --tg-bluff-oyster-10: #f6f5f4;
+  --tg-bluff-oyster-20: #e8e6e3;
+  --tg-bluff-oyster-30: #d7d5d2;
+  --tg-bluff-oyster-50: #c4c0bc;
+  --tg-bluff-oyster-100: #aea9a5;
+  --tg-bluff-oyster-200: #9b9591;
+  --tg-bluff-oyster-300: #85807c;
+  --tg-bluff-oyster-400: #76716d;
+  --tg-bluff-oyster-500: #65605d;
+  --tg-bluff-oyster-600: #5a5653;
+  --tg-bluff-oyster-700: #44413d;
+  --tg-bluff-oyster-800: #393531;
+  --tg-bluff-oyster-900: #2f2c28;
+
+  /* silver-fern */
+  --tg-silver-fern-5: #fbfbfb;
+  --tg-silver-fern-10: #f7f7f7;
+  --tg-silver-fern-20: #e9e9e9;
+  --tg-silver-fern-30: #dadada;
+  --tg-silver-fern-50: #c9c9c9;
+  --tg-silver-fern-100: #b9b9b9;
+  --tg-silver-fern-200: #a1a1a1;
+  --tg-silver-fern-300: #888;
+  --tg-silver-fern-400: #777;
+  --tg-silver-fern-500: #666;
+  --tg-silver-fern-600: #555;
+  --tg-silver-fern-700: #444;
+  --tg-silver-fern-800: #333;
+  --tg-silver-fern-900: #222;
+
+  /* glacier */
+  --tg-glacier-5: #fafbfe;
+  --tg-glacier-10: #f4f6fc;
+  --tg-glacier-20: #e6e9ef;
+  --tg-glacier-30: #d3d8e2;
+  --tg-glacier-50: #bbc4d5;
+  --tg-glacier-100: #a4b1c5;
+  --tg-glacier-200: #8e9eb6;
+  --tg-glacier-300: #7b8ca6;
+  --tg-glacier-400: #6d7e98;
+  --tg-glacier-500: #5f6f88;
+  --tg-glacier-600: #546279;
+  --tg-glacier-700: #48546a;
+  --tg-glacier-800: #3e465c;
+  --tg-glacier-900: #323a4d;
+
+  /* 2025 rebrand */
+  /* Blurple */
+  --tg-blurple-5: #f8f8fe;
+  --tg-blurple-10: #e7e8fb;
+  --tg-blurple-20: #cfd2f7;
+  --tg-blurple-30: #b7bcf2;
+  --tg-blurple-50: #a0a7ed;
+  --tg-blurple-100: #8991e7;
+  --tg-blurple-200: #737de1;
+  --tg-blurple-300: #5d68da;
+  --tg-blurple-400: #4854d3;
+  --tg-blurple-500: #3b45cb;
+  --tg-blurple-600: #2f38c1;
+  --tg-blurple-700: #242bb6;
+  --tg-blurple-800: #1b20aa;
+  --tg-blurple-900: #13169d;
+
+  /* Barbie */
+  --tg-barbie-5: #fff2f9;
+  --tg-barbie-10: #f9e6f3;
+  --tg-barbie-20: #f5cae6;
+  --tg-barbie-30: #f3aed8;
+  --tg-barbie-50: #f290ca;
+  --tg-barbie-100: #f270ba;
+  --tg-barbie-200: #f44faa;
+  --tg-barbie-300: #f82c98;
+  --tg-barbie-400: #fd0884;
+  --tg-barbie-500: #ef0078;
+  --tg-barbie-600: #de006c;
+  --tg-barbie-700: #ce0060;
+  --tg-barbie-800: #be0054;
+  --tg-barbie-900: #ad0049;
+
+  /* Kowhai */
+  --tg-kowhai-5: #fffeef;
+  --tg-kowhai-10: #fffde6;
+  --tg-kowhai-20: #fffccc;
+  --tg-kowhai-30: #fffab3;
+  --tg-kowhai-50: #fff899;
+  --tg-kowhai-100: #fff580;
+  --tg-kowhai-200: #fff266;
+  --tg-kowhai-300: #ffed4d;
+  --tg-kowhai-400: #ffe833;
+  --tg-kowhai-500: #ffe11a;
+  --tg-kowhai-600: #ffda00;
+  --tg-kowhai-700: #f1cd00;
+  --tg-kowhai-800: #e4b100;
+  --tg-kowhai-900: #d68a00;
+}

@@ -1,20 +1,43 @@
 /* Target: iPad Air (1st gen), portrait.
    2048 x 1536 physical = 768 x 1024 CSS px. Safari 12 baseline. */
 
+/* Semantic tokens only — every value comes from the Tangram palette in
+   colors.css. Re-theming means editing this block, nothing else. */
+
 :root {
-  --bg: #000;
-  --fg: #fff;
-  --dim: #6a6a6a;
-  --dimmer: #3d3d3d;
-  --faint: #2a2a2a;
-  --rule: #1a1a1a;
-  --accent: #4da3ff;
-  --error: #8a4a3a;
+  /* Dark: the default bedside state. */
+  --bg: var(--tg-silver-fern-900);
+  --fg: var(--tg-bluff-oyster-100);
+  --dim: var(--tg-bluff-oyster-300);
+  --dimmer: var(--tg-bluff-oyster-500);
+  --faint: var(--tg-bluff-oyster-700);
+  --rule: var(--tg-bluff-oyster-800);
+  --accent: var(--tg-bluff-oyster-100);
+  --error: var(--tg-pohutukawa-300);
 
   --view-w: 768px;
   --view-h: 1024px;
   --pad-x: 36px;
   --pad-y: 32px;
+}
+
+/* Light: the iPad used as a lamp. Tap anywhere to switch. */
+:root.theme-light {
+  --bg: var(--tg-hokey-pokey-100);
+  --fg: var(--tg-jaffa-30);
+  --dim: var(--tg-jaffa-50);
+  --dimmer: var(--tg-jaffa-100);
+  --faint: var(--tg-jaffa-200);
+  --rule: var(--tg-jaffa-100);
+  --accent: var(--tg-jaffa-30);
+  --error: var(--tg-pohutukawa-800);
+}
+
+/* Chart marks follow the text colour; wet hours read at full strength
+   against a much dimmer dry baseline. */
+:root {
+  --chart-wet: var(--fg);
+  --chart-dry: var(--faint);
 }
 
 * {
@@ -30,6 +53,12 @@ body {
   background: var(--bg);
   color: var(--fg);
   overflow: hidden;
+  /* Removes the 300ms tap delay, so the light switches instantly. */
+  touch-action: manipulation;
+}
+
+body {
+  transition: background-color 0.4s ease;
 }
 
 body {
@@ -56,7 +85,7 @@ body {
 }
 
 .app-bounds {
-  outline: 2px dotted rgba(255, 255, 255, 0.45);
+  outline: 2px dotted var(--dimmer);
   outline-offset: -1px;
 }
 
@@ -167,6 +196,35 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.rain-baseline,
+.rain-grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.rain-grid {
+  stroke-opacity: 0.55;
+}
+
+.rain-bar {
+  fill: var(--chart-dry);
+}
+
+.rain-bar.is-wet {
+  fill: var(--chart-wet);
+}
+
+.rain-hour {
+  fill: var(--dimmer);
+  font-size: 16px;
+}
+
+.rain-now {
+  stroke: var(--fg);
+  stroke-opacity: 0.35;
+  stroke-width: 2;
 }
 
 
