@@ -3,22 +3,40 @@ import * as Calendar from './calendar.js';
 import * as Clock from './clock.js';
 import * as Theme from './theme.js';
 import * as Weather from './weather.js';
-import { formatTime } from './util.js';
+import { formatDayLabel, formatTime, isSameDay } from './util.js';
 
 const byId = (id) => document.getElementById(id);
 
-let statusEl;
+const failures = { weather: null, calendar: null };
 
-function setStatus(errors) {
-  const parts = [`Updated ${formatTime(new Date(), true)}`, ...errors];
-  statusEl.textContent = parts.join(' · ');
-  statusEl.classList.toggle('status-error', errors.length > 0);
+let statusEl;
+let lastHealthyAt = null;
+
+// Bare time is ambiguous once the display has been up for days, so show
+// the day too when the last good update was not today.
+function stamp(date) {
+  return isSameDay(date, new Date())
+    ? formatTime(date, true)
+    : `${formatDayLabel(date)} ${formatTime(date, true)}`;
 }
 
-async function refreshAll() {
-  const errors = (await Promise.all([Weather.refresh(), Calendar.refresh()]))
-    .filter(Boolean);
-  setStatus(errors);
+function setStatus() {
+  const current = [failures.weather, failures.calendar].filter(Boolean);
+  const lead = lastHealthyAt ? `Updated ${stamp(lastHealthyAt)}` : 'Starting';
+
+  statusEl.textContent = [lead, ...current].join(' · ');
+  statusEl.classList.toggle('status-error', current.length > 0);
+}
+
+async function run(source, refresh) {
+  failures[source] = await refresh();
+  if (!failures.weather && !failures.calendar) lastHealthyAt = new Date();
+  setStatus();
+}
+
+function refreshAll() {
+  run('weather', Weather.refresh);
+  run('calendar', Calendar.refresh);
 }
 
 function start() {
@@ -31,6 +49,8 @@ function start() {
   Weather.init({ chartEl: byId('rain-chart'), summaryEl: byId('rain-summary') });
   Calendar.init({ daysEl: byId('days'), noteEl: byId('calendar-note') });
 
+  // Fires onDayChange immediately, which performs the initial load, and
+  // again at every midnight so the three-day columns roll over.
   Clock.start({
     timeEl: byId('clock'),
     meridiemEl: byId('clock-meridiem'),
@@ -38,11 +58,8 @@ function start() {
     onDayChange: refreshAll,
   });
 
-  setInterval(() => Weather.refresh().then((e) => setStatus(e ? [e] : [])),
-    CONFIG.REFRESH.weatherMs);
-  setInterval(() => Calendar.refresh().then((e) => setStatus(e ? [e] : [])),
-    CONFIG.REFRESH.calendarMs);
-  setInterval(() => window.location.reload(), CONFIG.REFRESH.reloadMs);
+  setInterval(() => run('weather', Weather.refresh), CONFIG.REFRESH.weatherMs);
+  setInterval(() => run('calendar', Calendar.refresh), CONFIG.REFRESH.calendarMs);
 }
 
 start();

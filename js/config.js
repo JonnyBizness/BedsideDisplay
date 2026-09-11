@@ -25,13 +25,16 @@ export const CONFIG = {
   SHOW_BOUNDS: true,
 
   REFRESH: {
-    weatherMs: 15 * 60 * 1000,
-    calendarMs: 10 * 60 * 1000,
-    // Full page reload, to shed leaks on a long-running old device.
-    reloadMs: 6 * 60 * 60 * 1000,
+    weatherMs: 30 * 60 * 1000,
+    calendarMs: 60 * 60 * 1000,
   },
 
-  // Apps Script is slower than a plain API; 15s was too tight and the
-  // calendar timed out on most polls.
-  HTTP_TIMEOUT_MS: 30000,
+  // Tuned for a page that loads once and stays open for weeks: wait a long
+  // time rather than give up, and retry a transient failure before showing
+  // one. There is deliberately no automatic page reload - see README.
+  HTTP: {
+    timeoutMs: 60000,
+    retries: 2,
+    retryBackoffMs: 5000,
+  },
 };

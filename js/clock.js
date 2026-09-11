@@ -27,10 +27,18 @@ function render() {
 // Re-align to the next minute boundary after each tick; setInterval
 // drifts badly on a device left idle for weeks.
 function scheduleNext() {
-  const now = Date.now();
-  const delay = 60000 - (now % 60000);
+  const delay = 60000 - (Date.now() % 60000);
+
   setTimeout(() => {
-    render();
+    // Nothing may escape this callback. An uncaught error would skip the
+    // reschedule below and freeze the clock permanently - the one failure
+    // a bedside display cannot tolerate. A wrong minute recovers on the
+    // next tick; a dead chain never does.
+    try {
+      render();
+    } catch (error) {
+      // Intentionally swallowed: keep ticking.
+    }
     scheduleNext();
   }, delay + 50);
 }

@@ -164,13 +164,49 @@ Only if the project is lost.
 With `CALENDAR_PROXY_URL` blank, the columns render empty and show
 *not configured*.
 
+## Running for weeks
+
+The display is built to be loaded once and left alone, not reloaded.
+
+**It never reloads itself.** An earlier version reloaded every 6 hours to
+shed memory. That was removed: if the network happened to be down at reload
+time, the iPad would land on a browser error page and stay dead until someone
+noticed. A stale display that recovers on its next poll is strictly better
+than a blank one. Nothing accumulates between renders — each refresh clears
+and rebuilds its nodes, and no listeners are added after startup.
+
+**Polling is slow and forgiving.** Calendar hourly, weather every 30 minutes,
+a 60s timeout and 2 retries with exponential backoff (5s, then 10s). A
+transient failure never reaches the screen; a real one shows on the status
+line and keeps retrying on the next tick.
+
+**The clock tick can never die.** It reschedules itself inside a `try`, so an
+error during a render costs one wrong minute instead of freezing the clock
+forever. Do not "tidy" that `catch` away — a frozen clock is the one failure
+this display cannot absorb.
+
+**Staleness is visible.** The status line shows the last time *everything*
+succeeded, with the day included once that is no longer today. `Updated
+Tue 09:15` on a Friday means the calendar has been failing for days.
+
+**Midnight rollover** is driven by the clock noticing the date changed, which
+triggers a full refresh so the three-day columns advance.
+
 ## Local preview
 
-ES modules will not load over `file://`. Serve it:
+ES modules will not load over `file://`. Use the bundled server rather than
+`python -m http.server`:
 
 ```bash
-python -m http.server 8123
+python tools/serve.py 8123
 ```
+
+It sends `Cache-Control: no-store`. Plain `http.server` lets Chrome cache ES
+modules, which silently mixes old and new files after an edit — that produces
+failures that look exactly like real bugs (a removed config key reads as
+`undefined` and every request instantly "times out"). If you have already
+cached files from a plain server, serve on a different port to get a clean
+cache key.
 
 ## Deploying
 
@@ -185,5 +221,9 @@ Open the Pages URL in Safari, Share → **Add to Home Screen**, then launch from
 the icon. The `apple-mobile-web-app-capable` meta tag makes it run without
 browser chrome. Set Settings → Display & Brightness → Auto-Lock → Never.
 
-The page reloads itself every 6 hours (`REFRESH.reloadMs`) to shed memory on a
-device that never restarts.
+Then leave it. It does not reload itself — see **Running for weeks** above.
+
+**After pushing an update**, the iPad keeps running the version it loaded at
+open time; reload it by hand to pick up changes. GitHub Pages serves assets
+with `max-age=600`, so if you reload within ten minutes of a push you can get
+a mix of old and new modules. Wait, or reload twice.
