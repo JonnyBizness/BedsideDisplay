@@ -10,8 +10,9 @@ enable GitHub Pages.
 | --- | --- |
 | Clock, rain chart, three-day columns | Built and working |
 | Weather (Open-Meteo, Te Aro) | Live, no key needed |
-| Calendar proxy (Apps Script) | Deployed, authorised, returning JSON |
+| Calendar proxy (Apps Script) | Deployed, authorised, returning JSON in ~2s |
 | `CALENDAR_PROXY_URL` in `js/config.js` | Set and verified cross-origin |
+| Tap-to-toggle light mode | Working, persists across reloads |
 | GitHub Pages | Not yet enabled |
 | `SHOW_BOUNDS` | Still `true` — dotted preview outline is showing |
 
@@ -91,16 +92,37 @@ The `/exec` URL is a secret: anyone holding it can read the calendar. It also
 ships inside the JavaScript the iPad downloads, so it is readable by anyone
 who can load the page. That is inherent to a serverless build, not a mistake.
 
-#### Required: the Advanced Calendar Service
+#### Optional: the Advanced Calendar Service
 
-In the script editor, **Services (+) → Calendar API → Add**. `Code.gs` calls
-`Calendar.Events.list`, and without the service enabled `Calendar` is
-undefined and every request throws.
+`Code.gs` as written uses `CalendarApp` and needs no extra setup. This is
+what is deployed, and it normally answers in about 2 seconds.
 
-It does not use `CalendarApp`, which looks simpler and needs no service, but
-was measured at **32–46 seconds per request** — past any sane client timeout.
-`Calendar.Events.list` returns in a couple of seconds. Do not "simplify" it
-back.
+It is worth knowing that it does not *always*. During one sustained period it
+returned in 32–46s per request, with some responses past 60s, then recovered
+to 2s with no change to the script. That looks like Google-side throttling
+rather than anything in the code. The 60s timeout and retries in
+`js/config.js` exist to ride out those patches.
+
+If slow periods become common, switch to the Advanced Calendar Service:
+**Services (+) → Calendar API → Add** in the editor, then replace the
+`CalendarApp` block in `doGet` with:
+
+```js
+const response = Calendar.Events.list(id, {
+  timeMin: from.toISOString(),
+  timeMax: to.toISOString(),
+  singleEvents: true,
+  orderBy: 'startTime',
+  maxResults: 250,
+  fields: 'items(summary,start,end)',
+});
+if (response.items) items.push(...response.items);
+```
+
+It returns the Calendar API shape directly, so `ymd()` and the all-day
+branch are no longer needed and the client is unchanged. **Add the service
+first** — without it `Calendar` is undefined and every request throws
+`Calendar is not defined`.
 
 #### Changing the script
 
@@ -127,8 +149,8 @@ it behaves exactly like the iPad. What you see tells you which thing broke:
 | Google sign-in page | Access is not **Anyone** (`Anyone with Google account` also fails) |
 | "Unable to open the file" / 404 | No Web app deployment at that URL — it was replaced or deleted |
 | "Access denied" / 403 | Deployment exists but is restricted |
-| JSON, but takes 30s+ | Script is using `CalendarApp`; switch to the Advanced Calendar Service |
-| Error mentioning `Calendar is not defined` | Advanced Calendar Service not added |
+| JSON, but takes 30s+ | Google-side slowness; retries usually ride it out. See **Optional: the Advanced Calendar Service** |
+| Error mentioning `Calendar is not defined` | Script uses `Calendar.Events.list` without the Advanced Calendar Service added |
 
 Status reads *Calendar: Request timed out* when a response takes longer than
 `HTTP_TIMEOUT_MS` in `js/config.js`. Time the endpoint before raising it —
