@@ -59,6 +59,11 @@ body {
 
 body {
   transition: background-color 0.4s ease;
+  /* iOS only treats an element as tappable, and dispatches click on it,
+     when it looks interactive. Without this a tap on the background can
+     fire no click at all. */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
